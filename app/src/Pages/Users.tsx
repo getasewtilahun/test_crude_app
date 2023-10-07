@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { Table, Button } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import UserModal from '../Components/UserModal';
+import './Users.css'; 
+import Table from 'antd/es/table';
+import {
+    EditOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons';
+import { Button } from 'antd';
+
+
 
 interface DataType {
     key: React.Key;
@@ -29,6 +37,27 @@ const columns: ColumnsType<DataType> = [
         title: 'Phone Number',
         dataIndex: 'phone_number',
     },
+    {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <span>
+            {/* Edit Icon Button */}
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(record.key)}
+              style={{ marginRight: 8 }}
+            />
+            {/* Delete Icon Button */}
+            <Button
+             className="red-button"
+              icon={<DeleteOutlined />}
+              onClick={() => handleDelete(record.key)}
+            />
+          </span>
+        ),
+      },
 ];
 
 const data: DataType[] = [];
@@ -88,15 +117,17 @@ const Users: React.FC = () => {
         ],
     };
 
-    return <>
-
-        <div>
+    return (
+        <div className="users-container"> {/* Apply the CSS class */}
             <div>
-               <UserModal></UserModal>
+                <UserModal></UserModal>
             </div>
-            <Table columns={columns} dataSource={data} />;
+            <Table columns={columns} dataSource={data} />
+
+
+            
         </div>
-    </>
+    );
 };
 
 export default Users;

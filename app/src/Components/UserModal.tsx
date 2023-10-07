@@ -29,7 +29,7 @@ const UserModal: React.FC = () => {
             <Button type="primary" style={{ float: "right" }} onClick={showModal}>
                 Add User
             </Button>
-            <Modal title="User Add Form" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="New User Add Form" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <Input className='pt-2' placeholder='Enter User Name' onChange={(e: any) => setName(e.target.value)} ></Input>
                 <Input className='pt-2' placeholder='Enter Email' onChange={(e: any) => setEmail(e.target.value)} ></Input>
                 <Input className='pt-2' placeholder='Enter Password' onChange={(e: any) => setPassword(e.target.value)} ></Input>

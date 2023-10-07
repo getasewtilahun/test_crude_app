@@ -1,0 +1,13 @@
+/* src/styles/App.css */
+body {
+  background-image: url('/background.jpg'); /* Replace with your image URL */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* Additional styles can be added here */
+}
+
+.red-button {
+  background-color: white;
+  color: red;
+}

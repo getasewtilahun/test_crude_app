@@ -45,14 +45,14 @@ const columns: ColumnsType<DataType> = [
         <Button
           type="primary"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.key)}
+          // onClick={() => handleEdit(record.key)}
           style={{ marginRight: 8 }}
         />
         {/* Delete Icon Button */}
         <Button
           className="red-button"
           icon={<DeleteOutlined />}
-          onClick={() => handleDelete(record.key)}
+        // onClick={() => handleDelete(record.key)}
         />
       </span>
     ),
@@ -61,78 +61,36 @@ const columns: ColumnsType<DataType> = [
 
 
 const Users: React.FC = () => {
-  const { data, isLoading, isError, error } = useQuery([users], async () => {
-    const response = await axiosInstance.get('/api/v1/user');
+  const query = useQuery('users', async () => {
+    const response = await axiosInstance.get('user');
     return response.data.result;
   });
 
- 
+  console.log('error', query);
 
-  // Use React Query mutations for create, update, and delete
-  const createUserMutation = useMutation((user) => axiosInstance.post('/api/v1/user', user));
-  const updateUserMutation = useMutation((data) => {
-    const { id, ...userData } = data;
-    return axiosInstance.put(`/api/v1/user/${id}`, userData);
-  });
-  const deleteUserMutation = useMutation((id) => axiosInstance.delete(`/api/v1/user/${id}`));
+  // const createUserMutation = useMutation(data, {
+  //     onSuccess: () => {
+  //       console.log('success')
+  //     },
+  //   })
 
+  // const updateUserMutation = (data: any) => {
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: 'odd',
-        text: 'Select Odd Row',
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: 'even',
-        text: 'Select Even Row',
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
-  };
+  // }
 
   return (
     <div className="users-container">
       <div>
         <UserModal
-          createUserMutation={createUserMutation}
-          updateUserMutation={updateUserMutation}
+          // createUserMutation={createUserMutation}
+          // updateUserMutation={updateUserMutation}
         />
       </div>
-      <Table columns={columns} dataSource={users} />
+      <Table columns={columns} dataSource={query.data} />
     </div>
   );
 };
+
+
 
 export default Users;

@@ -1,16 +1,15 @@
+// src/Pages/Users.tsx
 
-import React, { useState } from 'react';
-import { useQuery, useMutation } from 'react-query';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import {
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
 import { Button, Table } from 'antd';
 import UserModal from '../Components/UserModal';
-import type { ColumnsType } from 'antd/es/table';
 import axiosInstance from '../util/util';
-
-
+import './Users.css';
 
 interface DataType {
   key: React.Key;
@@ -20,79 +19,92 @@ interface DataType {
   phone_number: string;
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-  },
-  {
-    title: 'Password',
-    dataIndex: 'password',
-  },
-  {
-    title: 'Phone Number',
-    dataIndex: 'phone_number',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        {/* Edit Icon Button */}
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          // onClick={() => handleEdit(record.key)}
-          style={{ marginRight: 8 }}
-        />
-        {/* Delete Icon Button */}
-        <Button
-          className="red-button"
-          icon={<DeleteOutlined />}
-        // onClick={() => handleDelete(record.key)}
-        />
-      </span>
-    ),
-  },
-];
-
-
 const Users: React.FC = () => {
+  const queryClient = useQueryClient();
   const query = useQuery('users', async () => {
     const response = await axiosInstance.get('user');
     return response.data.result;
   });
 
-  console.log('error', query);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<DataType | null>(null);
 
-  // const createUserMutation = useMutation(data, {
-  //     onSuccess: () => {
-  //       console.log('success')
-  //     },
-  //   })
+  const showModal = () => {
+    setSelectedUser(null); // Reset selectedUser when adding a new user
+    setIsModalOpen(true);
+  };
 
-  // const updateUserMutation = (data: any) => {
+  const handleEdit = (user: DataType) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
 
-  // }
+  const handleDelete = (key: React.Key) => {
+    // Implement your delete logic here
+    // Use key to identify the user to delete
+    // After deletion, invalidate the 'users' query
+    axiosInstance.delete(`user/${key}`).then(() => {
+      queryClient.invalidateQueries('users');
+      console.log('User deleted');
+    }).catch((error: any) => {
+      console.error('Error deleting user:', error);
+    });
+  };
 
   return (
     <div className="users-container">
       <div>
-        <UserModal
-          // createUserMutation={createUserMutation}
-          // updateUserMutation={updateUserMutation}
-        />
+        <Button type="primary" style={{ float: 'right' }} onClick={showModal}>
+          Add User
+        </Button>
       </div>
-      <Table columns={columns} dataSource={query.data} />
+      <Table
+        columns={[
+          {
+            title: 'Name',
+            dataIndex: 'name',
+          },
+          {
+            title: 'Email',
+            dataIndex: 'email',
+          },
+          {
+            title: 'Password',
+            dataIndex: 'password',
+          },
+          {
+            title: 'Phone Number',
+            dataIndex: 'phone_number',
+          },
+          {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+              <span>
+                <Button
+                  type="primary"
+                  icon={<EditOutlined />}
+                  onClick={() => handleEdit(record)}
+                  style={{ marginRight: 8 }}
+                />
+                <Button
+                  className="red-button"
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDelete(record.key)}
+                />
+              </span>
+            ),
+          },
+        ]}
+        dataSource={query.data}
+      />
+      <UserModal
+        isModalOpen={isModalOpen}
+        selectedUser={selectedUser}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
 
-
-
 export default Users;
-

@@ -1,9 +1,10 @@
 /* src/styles/App.css */
 body {
-  background-image: url('/background.jpg'); /* Replace with your image URL */
+  /* background-image: url('/background.jpg'); */
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-color: rgb(192, 211, 211);
   /* Additional styles can be added here */
 }
 
